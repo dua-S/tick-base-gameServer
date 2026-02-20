@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package pb;
+option go_package = "./pb";
+
+// --- User Service 定义 ---
+service UserService {
+  rpc Register (RegisterReq) returns (RegisterResp);
+  rpc Login (LoginReq) returns (LoginResp);
+  rpc GetHistory (GetHistoryReq) returns (GetHistoryResp);
+  rpc ValidateToken (ValidateTokenReq) returns (ValidateTokenResp); // 供 Gateway/Game 校验
+}
+
+message RegisterReq {
+  string username = 1;
+  string password = 2;
+}
+
+message RegisterResp {
+  int64 uid = 1;
+}
+
+message LoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResp {
+  string token = 1;
+  int64 uid = 2;
+  string username = 3;
+}
+
+message ValidateTokenReq {
+  string token = 1;
+}
+
+message ValidateTokenResp {
+  bool valid = 1;
+  int64 uid = 2;
+}
+
+message GetHistoryReq {
+  int64 uid = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+message GetHistoryResp {
+  repeated MatchRecord history = 1;
+}
+
+message MatchRecord {
+  string match_id = 1;
+  bool is_winner = 2;
+  int32 kills = 3;
+  int64 timestamp = 4;
+}
+
+// --- Match Service 定义 ---
+service MatchService {
+  rpc CreateRoom (CreateRoomReq) returns (CreateRoomResp);
+  rpc ListRooms (ListRoomsReq) returns (ListRoomsResp);
+  rpc JoinRoom (JoinRoomReq) returns (JoinRoomResp);
+  rpc UpdateRoom (UpdateRoomReq) returns (UpdateRoomResp);
+}
+
+message CreateRoomReq {
+  int64 uid = 1;
+  RoomConfig config = 2;
+}
+
+message RoomConfig {
+  string room_name = 1;
+  int32 map_id = 2;
+  int32 max_players = 3;
+}
+
+message CreateRoomResp {
+  string room_id = 1;
+  string room_name = 2;
+  string server_ip = 3;
+  int32 server_port = 4;
+  string room_token = 5;
+}
+
+message ListRoomsReq {}
+
+message ListRoomsResp {
+  repeated RoomInfo rooms = 1;
+}
+
+message RoomInfo {
+  string room_id = 1;
+  string room_name = 2;
+  int32 current_players = 3;
+  int32 max_players = 4;
+  string status = 5;
+}
+
+message JoinRoomReq {
+  string room_id = 1;
+  int64 uid = 2;
+}
+
+message JoinRoomResp {
+  string room_id = 1;
+  string server_ip = 2;
+  int32 server_port = 3;
+  string room_token = 4;
+}
+
+message UpdateRoomReq {
+  string room_id = 1;
+  int64 uid = 2; // 主持人UID
+  RoomConfig config = 3;
+}
+
+message UpdateRoomResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// --- Game Service 定义 ---
+service GameService {
+  rpc ValidateToken (GameValidateTokenReq) returns (GameValidateTokenResp);
+  rpc NotifyGameStart (NotifyGameStartReq) returns (NotifyGameStartResp);
+}
+
+message GameValidateTokenReq {
+  string token = 1;
+  string room_id = 2;
+}
+
+message GameValidateTokenResp {
+  bool valid = 1;
+}
+
+message NotifyGameStartReq {
+  string room_id = 1;
+}
+
+message NotifyGameStartResp {
+  bool success = 1;
+}

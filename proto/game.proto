@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package pb;
+option go_package = "./pb";
+
+// --- 顶层消息包 ---
+message GamePacket {
+  oneof payload {
+    C2SInput input = 1; // 客户端 -> 服务端：操作
+    S2CSnapshot snapshot = 2; // 服务端 -> 客户端：状态同步
+    GameEvent event = 3; // 服务端 -> 客户端：重要事件
+    C2SJoinRoom join = 4; // 客户端 -> 服务端：加入
+  }
+}
+
+// --- 客户端发送 (Client -> Server) ---
+
+message C2SJoinRoom {
+  string room_id = 1;
+  string token = 2;
+  string username = 3;
+}
+
+message C2SInput {
+  int64 timestamp = 1; // 客户端毫秒时间戳
+  MoveCmd move = 2;
+  ChargeCmd charge = 3;
+  int64 target_tick = 4; // 客户端期望执行的目标tick（用于延迟补偿）
+}
+
+message MoveCmd {
+  float dx = 1; // -1 到 1
+  float dy = 2; // -1 到 1
+}
+
+message ChargeCmd {
+  bool is_charging = 1; // true=按下, false=松开
+  int32 angle = 2; // 瞄准角度 0表示右，1表示上，2表示左，3表示下
+}
+
+// --- 等待室状态 (Waiting Room) ---
+
+message C2SPlayerReady {
+  bool is_ready = 1;
+}
+
+message PlayerInWaitingRoom {
+  int64 uid = 1;
+  string username = 2;
+  bool is_ready = 3;
+}
+
+message S2CWaitingRoomState {
+  repeated PlayerInWaitingRoom players = 1;
+  bool all_ready = 2;
+  int64 host_uid = 3;
+}
+
+// --- 服务端发送 (Server -> Client) ---
+
+message S2CSnapshot {
+  int64 server_time = 1;
+  int64 tick = 2;
+  repeated PlayerState players = 3;
+  repeated BeamState beams = 4;
+}
+
+message PlayerState {
+  int64 uid = 1;
+  float x = 2;
+  float y = 3;
+  int32 hp = 4;
+  int32 max_hp = 5;
+  bool is_dead = 6;
+  bool is_charging = 7;
+  int32 charge_start_time_delta = 8; // 相对当前时间的差值，用于前端平滑动画
+  string username = 9;
+}
+
+message BeamState {
+  string id = 1;
+  float start_x = 2;
+  float start_y = 3;
+  float end_x = 4;
+  float end_y = 5;
+  float width = 6;
+  int32 remaining_ms = 7; // 剩余显示时间
+}
+
+message GameEvent {
+  enum EventType {
+    GAME_START = 0;
+    PLAYER_DEATH = 1;
+    GAME_OVER = 2;
+  }
+  EventType type = 1;
+  string message = 2;
+  int64 target_uid = 3; // 死亡者或胜利者ID
+  string extra_data = 4; // JSON: 战绩等
+}

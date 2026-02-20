@@ -1,0 +1,43 @@
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.log
+
+# Local config (if contains secrets)
+config.local.yaml
+.env
+
+# Worktrees
+.worktrees/
+
+#AGENTS
+.sisyphus/
+AGENTS.md
+
+
+

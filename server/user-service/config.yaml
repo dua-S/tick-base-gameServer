@@ -1,0 +1,16 @@
+server:
+  port: 9001 # gRPC 端口
+
+mysql:
+  #dsn: "root:123456@tcp(127.0.0.1:3306)/beam_arena?charset=utf8mb4&parseTime=True&loc=Local"
+  port: 3306
+  username: "tuser"
+  password: "tpass"
+  database: "tdata"
+jwt:
+  secret: "personal_key" # 必须与 Gateway 一致
+  expire_duration: 72h
+
+mq:
+  url: "amqp://guest:guest@localhost:5672/"
+  queue_name: "game_results"

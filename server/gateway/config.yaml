@@ -1,0 +1,10 @@
+server:
+  port: 8080
+  mode: debug # debug or release
+
+rpc:
+  user_service_addr: "localhost:9001"
+  match_service_addr: "localhost:9002"
+
+jwt:
+  secret: "personal_key" # 用于解析 Token

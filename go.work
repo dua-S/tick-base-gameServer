@@ -1,0 +1,9 @@
+go 1.25.6
+
+use (
+	./proto
+	./server/game-service
+	./server/gateway
+	./server/match-service
+	./server/user-service
+)

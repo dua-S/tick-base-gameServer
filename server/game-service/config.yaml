@@ -1,0 +1,16 @@
+server:
+  port: 9003
+  grpc_port: 9004
+  tick_rate: 64
+
+mq:
+  url: "amqp://guest:guest@localhost:5672/"
+  queue_name: "game_results"
+
+redis:
+  addr: "localhost:6379"
+
+game:
+  map_size: 2000
+  player_speed: 10.0
+  view_radius: 800.0 # 视野半径

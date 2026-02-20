@@ -1,0 +1,14 @@
+server:
+  port: 9002
+
+redis:
+  addr: "127.0.0.1:6379"
+  password: ""
+  db: 0
+
+# 简单的静态配置：可用的游戏服务器列表
+# 在生产环境中，这里通常通过服务发现(Etcd/Consul)动态获取
+game_servers:
+  - ip: "127.0.0.1"
+    port: 9003 # 对应 Game Service 的 WebSocket 端口
+    grpc_port: 9004 # 对应 Game Service 的 gRPC 端口(如果有)
